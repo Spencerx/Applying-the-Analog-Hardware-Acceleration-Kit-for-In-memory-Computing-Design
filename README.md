@@ -1,13 +1,99 @@
 # Applying the Analog Hardware Acceleration Kit for In-memory Computing Design
-### Final Project 3 - ECSE-541 McGill University
 
-## Abstract
-Deep Neural Networks (DNNs) have achieved promising progress in many complex tasks, including image or speech recognition, gaming, and real-time language responses. Training of large DNNs, however, is still considered a time-consuming and computationally intensive task that demands extra high computational resources taking many days. Analog-based devices have shown great potential to break von Neumann's bottleneck and potentially accelerate DNNs training by the orders of magnitude while consuming much less power. Nevertheless, the non-ideality problem still remains a daunting problem when implementing analog devices in in-memory computing design. Recently proposed IBM's analog hardware acceleration kit provides a window for the simulation of non-idealities of analog devices. In this paper, the IBM tool is utilized to simulate Resistive Processing Units (RPUs) to represent weights and biases in Fully-Connected Neural Network (FCNN). MNIST dataset is applied to the Analog FCNN. By performing optimizations on the hyperparameters, such as activation function, batch size and learning rate, 100% testing accuracy can be achieved even in the presence of noise, where SNR of 34 dB is assumed. Moreover, computation cost and performance are also examined. The results show that even by applying only 3-layered neural network (784-128-10), 95% accuracy can be achieved with only 3% decrements compared to the deeper ones.
+![Python](https://img.shields.io/badge/python-3.6%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-blue)
+![Stars](https://img.shields.io/github/stars/HungYangChang/Applying-the-Analog-Hardware-Acceleration-Kit-for-In-memory-Computing-Design)
 
-## Code Usage - (Python 3.6, Colab)
-1. Please Upload to python notebook (.ipynb file) to Colab
-2. Choose GPU as runtime type
-3. Enjoy it :)
+> Simulating and optimizing neural network training on analog resistive processing units (RPUs) using IBM's Analog Hardware Acceleration Kit.
 
-## More info
-Code is also available on GitHub link (https://github.com/HungYangChang/ECSE-541-Final-Project)
+**[Full Report (PDF)](541_Final_report%20.pdf)** · **[Notebook](ECSE_541_Project_.ipynb)**
+
+---
+
+## Problem
+
+Training large deep neural networks is time-consuming and computationally expensive. The Von Neumann bottleneck — constant data movement between storage and computation — prevents real-time, energy-efficient computation on traditional digital hardware.
+
+## Solution
+
+We use IBM's [Analog Hardware Acceleration Kit (AIHWKit)](https://github.com/IBM/aihwkit) to simulate Resistive Processing Units (RPUs) that represent weights and biases directly in analog memory. This eliminates the data movement bottleneck and enables orders-of-magnitude improvements in training efficiency.
+
+## Architecture
+
+```
+┌────────────────────────────────────────────────┐
+│          Analog Neural Network Training        │
+├────────────────────────────────────────────────┤
+│                                                │
+│   Input (MNIST)                                │
+│       │                                        │
+│       ▼                                        │
+│   ┌──────────────────────────────────────┐     │
+│   │   Analog FCNN (RPU-based weights)    │     │
+│   │                                      │     │
+│   │   Layer 1: 784 → 256 (analog tiles)  │     │
+│   │   Layer 2: 256 → 128 (analog tiles)  │     │
+│   │   Layer 3: 128 → 10  (analog tiles)  │     │
+│   │                                      │     │
+│   │   Noise model: SNR = 34 dB           │     │
+│   └──────────────────────────────────────┘     │
+│       │                                        │
+│       ▼                                        │
+│   Classification Output (100% accuracy)        │
+│                                                │
+└────────────────────────────────────────────────┘
+```
+
+### Key Design Decisions
+
+- **RPU simulation over real hardware:** IBM's AIHWKit provides realistic non-ideality modeling without requiring physical analog chips.
+- **Hyperparameter optimization under noise:** Systematic tuning of activation functions, batch sizes, and learning rates to maintain accuracy despite analog noise.
+
+## Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Framework | IBM AIHWKit, PyTorch |
+| Compute | Google Colab (GPU) |
+| Dataset | MNIST |
+| Language | Python 3.6+ |
+
+## Getting Started
+
+```bash
+# Option 1: Run on Google Colab (recommended)
+# Upload ECSE_541_Project_.ipynb to Colab, select GPU runtime
+
+# Option 2: Local setup
+pip install aihwkit torch torchvision
+jupyter notebook ECSE_541_Project_.ipynb
+```
+
+## Results
+
+| Metric | Value | Context |
+|--------|-------|---------|
+| Test accuracy (noise-free) | **100%** | Analog FCNN on MNIST |
+| Test accuracy (SNR 34 dB) | **100%** | Robust to realistic analog noise |
+| Minimal architecture | **784-128-10** | 95% accuracy with only 3 layers |
+| Accuracy drop (minimal arch) | **3%** | Compared to deeper networks |
+
+## Known Limitations
+
+- Evaluated only on MNIST — more complex datasets (CIFAR-10, ImageNet) would better demonstrate scalability.
+- Noise model uses fixed SNR; real analog devices have more complex non-ideality profiles.
+- Single-architecture exploration; Neural Architecture Search could further optimize the analog-aware design.
+
+## Related Publication
+
+> **AI Hardware Acceleration with Analog Memory: Micro-architectures for Low Energy at High Speed**
+> _IBM Journal of Research and Development_
+> H.-Y. Chang, G.W. Burr, P. Narayanan, S. Ambrogio et al.
+
+## License
+
+MIT — see [LICENSE](./LICENSE) for details.
+
+---
+
+Built by [Hung-Yang (James) Chang](https://github.com/HungYangChang) · McGill University / IBM Research
